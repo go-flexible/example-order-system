@@ -11,52 +11,11 @@ type OrdersController struct{ Dependencies }
 
 func (o OrdersController) New(ctx context.Context, order Order) error {
 	order.OrderNumber = newOrderNumber(0)
-	order, err := insertNewOrder(ctx, o.DB(), order)
+
+	var err error
+	order, err = insertFullOrder(ctx, o.DB(), order)
 	if err != nil {
 		return err
-	}
-
-	// prepare the order id
-	for i, pymt := range order.Payments {
-		pymt.OrderID = order.ID
-
-		var err error
-		pymt, err = insertNewPayment(ctx, o.DB(), pymt)
-		if err != nil {
-			return err
-		}
-		order.Payments[i] = pymt
-	}
-
-	for i, li := range order.LineItems {
-		li.OrderID = order.ID
-
-		var err error
-		li, err = insertNewLineItem(ctx, o.DB(), li)
-		if err != nil {
-			return err
-		}
-		order.LineItems[i] = li
-	}
-
-	order.Total.OrderID = order.ID
-	total, err := insertNewOrderTotal(ctx, o.DB(), order.Total)
-	if err != nil {
-		return err
-	}
-
-	order.Total = total
-
-	for i, m := range order.Metadata {
-		m.OrderID = order.ID
-
-		var err error
-		m, err := insertOrderMetadata(ctx, o.DB(), m)
-		if err != nil {
-			return err
-		}
-
-		order.Metadata[i] = m
 	}
 
 	err = o.Nats().Publish("orders.new", order)

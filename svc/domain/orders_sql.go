@@ -6,6 +6,58 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
+func insertFullOrder(ctx context.Context, db *pgxpool.Pool, order Order) (Order, error) {
+	order, err := insertNewOrder(ctx, db, order)
+	if err != nil {
+		return order, err
+	}
+
+	// prepare the order id
+	for i, pymt := range order.Payments {
+		pymt.OrderID = order.ID
+
+		var err error
+		pymt, err = insertNewPayment(ctx, db, pymt)
+		if err != nil {
+			return order, err
+		}
+		order.Payments[i] = pymt
+	}
+
+	for i, li := range order.LineItems {
+		li.OrderID = order.ID
+
+		var err error
+		li, err = insertNewLineItem(ctx, db, li)
+		if err != nil {
+			return order, err
+		}
+		order.LineItems[i] = li
+	}
+
+	order.Total.OrderID = order.ID
+	total, err := insertNewOrderTotal(ctx, db, order.Total)
+	if err != nil {
+		return order, err
+	}
+
+	order.Total = total
+
+	for i, m := range order.Metadata {
+		m.OrderID = order.ID
+
+		var err error
+		m, err := insertOrderMetadata(ctx, db, m)
+		if err != nil {
+			return order, err
+		}
+
+		order.Metadata[i] = m
+	}
+
+	return order, nil
+}
+
 func insertNewOrder(ctx context.Context, db *pgxpool.Pool, order Order) (Order, error) {
 	const insertStmt = `
    INSERT INTO orders (id, number, created_at, updated_at)
