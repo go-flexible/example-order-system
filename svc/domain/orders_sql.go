@@ -100,3 +100,21 @@ RETURNING id, created_at, updated_at`
 
 	return total, nil
 }
+
+func insertOrderMetadata(ctx context.Context, db *pgxpool.Pool, md Metadata) (Metadata, error) {
+	const insertMetadataStmt = `
+   INSERT INTO order_metadata (id, order_id, "key", "value", created_at, updated_at)
+   VALUES (gen_random_uuid(), $1, $2, $3, now()::timestamptz, now()::timestamptz)
+RETURNING id, created_at, updated_at`
+
+	row := db.QueryRow(ctx, insertMetadataStmt, md.OrderID, md.Key, md.Value)
+
+	if err := row.Scan(&md.ID, &md.CreatedAt, &md.UpdatedAt); err != nil {
+		return md, DatabaseQueryError{
+			Stmt:  insertMetadataStmt,
+			Inner: err,
+		}
+	}
+
+	return md, nil
+}

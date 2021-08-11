@@ -47,6 +47,18 @@ func (o OrdersController) New(ctx context.Context, order Order) error {
 
 	order.Total = total
 
+	for i, m := range order.Metadata {
+		m.OrderID = order.ID
+
+		var err error
+		m, err := insertOrderMetadata(ctx, o.DB(), m)
+		if err != nil {
+			return err
+		}
+
+		order.Metadata[i] = m
+	}
+
 	err = o.Nats().Publish("orders.new", order)
 	if err != nil {
 		return PublishingError{error: err}

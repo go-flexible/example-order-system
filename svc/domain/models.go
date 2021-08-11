@@ -4,14 +4,14 @@ import "time"
 
 // Order is a struct that contains the order information.
 type Order struct {
-	ID          string              `json:"id"`           // uuid
-	OrderNumber string              `json:"order_number"` // human readable order number
-	LineItems   []LineItem          `json:"line_items"`
-	Payments    []Payment           `json:"payments"`
-	Metadata    map[string][]string `json:"metadata"`
-	Total       Total               `json:"total"`
-	CreatedAt   time.Time           `json:"created_at"`
-	UpdatedAt   time.Time           `json:"updated_at"`
+	ID          string     `json:"id"`           // uuid
+	OrderNumber string     `json:"order_number"` // human readable order number
+	LineItems   []LineItem `json:"line_items"`
+	Payments    []Payment  `json:"payments"`
+	Metadata    []Metadata `json:"metadata"`
+	Total       Total      `json:"total"`
+	CreatedAt   time.Time  `json:"created_at"`
+	UpdatedAt   time.Time  `json:"updated_at"`
 }
 
 // LineItem is a line item in an order.
@@ -56,4 +56,13 @@ type Total struct {
 	TotalAmountBeforeDiscount int       `json:"total_amount_before_discount"`
 	CreatedAt                 time.Time `json:"created_at"`
 	UpdatedAt                 time.Time `json:"updated_at"`
+}
+
+type Metadata struct {
+	ID        string    `json:"-"`
+	OrderID   string    `json:"-"`
+	Key       string    `json:"key"`
+	Value     string    `json:"value"`
+	CreatedAt time.Time `json:"-"`
+	UpdatedAt time.Time `json:"-"`
 }
