@@ -45,40 +45,12 @@ RETURNING id, created_at, updated_at`
 
 func insertNewLineItem(ctx context.Context, db *pgxpool.Pool, li LineItem) (LineItem, error) {
 	const insertLineItemStmt = `
-	INSERT INTO line_items (
-		id,
-		order_id,
-		quantity,
-		tax_amount,
-		unit_price_amount,
-		total_line_amount,
-		tax_amount_before_discount,
-		unit_price_amount_before_discount,
-		total_line_amount_before_discount,
-		unit_price_currency,
-		tax_amount_currency,
-		description,
-		created_at,
-		updated_at
-	)
-	VALUES (
-		gen_random_uuid(),
-		$1,
-		$2,
-		$3,
-		$4,
-		$5,
-		$6,
-		$7,
-		$8,
-		$9,
-		$10,
-		$11,
-		now()::timestamptz,
-		now()::timestamptz
-	)
-	RETURNING id, created_at, updated_at
-	`
+   INSERT INTO line_items (id, order_id, quantity, tax_amount, unit_price_amount, total_line_amount,
+                           tax_amount_before_discount, unit_price_amount_before_discount,
+                           total_line_amount_before_discount, unit_price_currency, tax_amount_currency, description,
+                           created_at, updated_at)
+   VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW()::timestamptz, NOW()::timestamptz)
+RETURNING id, created_at, updated_at`
 
 	row := db.QueryRow(ctx, insertLineItemStmt,
 		li.OrderID,
@@ -102,4 +74,29 @@ func insertNewLineItem(ctx context.Context, db *pgxpool.Pool, li LineItem) (Line
 	}
 
 	return li, nil
+}
+
+func insertNewOrderTotal(ctx context.Context, db *pgxpool.Pool, total Total) (Total, error) {
+	const insertOrderTotalStmt = `
+   INSERT INTO order_totals (id, order_id, amount, total_amount, tax_amount, total_amount_before_discount,
+                             tax_amount_before_discount, created_at, updated_at)
+   VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, NOW()::timestamptz, NOW()::timestamptz)
+RETURNING id, created_at, updated_at`
+	row := db.QueryRow(ctx, insertOrderTotalStmt,
+		total.OrderID,
+		total.Amount,
+		total.TotalAmount,
+		total.TaxAmount,
+		total.TotalAmountBeforeDiscount,
+		total.TaxAmountBeforeDiscount,
+	)
+
+	if err := row.Scan(&total.ID, &total.CreatedAt, &total.UpdatedAt); err != nil {
+		return total, DatabaseQueryError{
+			Stmt:  insertOrderTotalStmt,
+			Inner: err,
+		}
+	}
+
+	return total, nil
 }

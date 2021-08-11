@@ -47,11 +47,13 @@ type Payment struct {
 
 // Total is a struct that contains the order total information.
 type Total struct {
-	ID                        string `json:"id"`
-	OrderID                   string `json:"order_id"`
-	Amount                    int    `json:"amount"`
-	TaxAmount                 int    `json:"tax_amount"`
-	TotalAmount               int    `json:"total_amount"`
-	TaxAmountBeforeDiscount   int    `json:"tax_amount_before_discount"`
-	TotalAmountBeforeDiscount int    `json:"total_amount_before_discount"`
+	ID                        string    `json:"id"`
+	OrderID                   string    `json:"order_id"`
+	Amount                    int       `json:"amount"`
+	TaxAmount                 int       `json:"tax_amount"`
+	TotalAmount               int       `json:"total_amount"`
+	TaxAmountBeforeDiscount   int       `json:"tax_amount_before_discount"`
+	TotalAmountBeforeDiscount int       `json:"total_amount_before_discount"`
+	CreatedAt                 time.Time `json:"created_at"`
+	UpdatedAt                 time.Time `json:"updated_at"`
 }

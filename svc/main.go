@@ -25,7 +25,6 @@ import (
 )
 
 //go:embed migrations
-// TODO: find a good way to make migrations work as an embed.
 var migrations embed.FS
 
 var embedSourced = migration.EmbedMigrationSource{

@@ -39,6 +39,14 @@ func (o OrdersController) New(ctx context.Context, order Order) error {
 		order.LineItems[i] = li
 	}
 
+	order.Total.OrderID = order.ID
+	total, err := insertNewOrderTotal(ctx, o.DB(), order.Total)
+	if err != nil {
+		return err
+	}
+
+	order.Total = total
+
 	err = o.Nats().Publish("orders.new", order)
 	if err != nil {
 		return PublishingError{error: err}

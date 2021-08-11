@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS order_totals (
 	tax_amount INT8 NOT NULL,
 	total_amount_before_discount INT8 NOT NULL,
 	tax_amount_before_discount INT8 NULL,
+	created_at TIMESTAMPTZ NOT NULL,
+	updated_at TIMESTAMPTZ NULL,
 	CONSTRAINT order_totals_orders_id_fk FOREIGN KEY (order_id) REFERENCES orders(id),
 	INDEX order_totals_auto_index_order_totals_orders_id_fk (order_id ASC),
 	UNIQUE INDEX order_totals_id_uindex (id ASC),
