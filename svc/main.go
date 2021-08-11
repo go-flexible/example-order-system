@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"embed"
 	"errors"
 	"log"
 	"net/http"
@@ -12,6 +11,7 @@ import (
 	"github.com/Boostport/migration/driver/postgres"
 	"github.com/go-flexible/example-order-system/svc/config"
 	"github.com/go-flexible/example-order-system/svc/handlers"
+	"github.com/go-flexible/example-order-system/svc/migrations"
 	"github.com/go-flexible/example-order-system/svc/workers"
 	"github.com/go-flexible/flex"
 	"github.com/go-flexible/flexhttp"
@@ -24,12 +24,9 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
-//go:embed migrations
-var migrations embed.FS
-
-var embedSourced = migration.EmbedMigrationSource{
-	EmbedFS: migrations,
-	Dir:     "migrations",
+var embedSource = migration.EmbedMigrationSource{
+	EmbedFS: migrations.FS,
+	Dir:     ".",
 }
 
 func main() {
@@ -126,7 +123,7 @@ func migrateDatabase(dsn string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	count, err := migration.Migrate(driver, embedSourced, migration.Up, 0)
+	count, err := migration.Migrate(driver, embedSource, migration.Up, 0)
 	if err != nil {
 		log.Fatal(err)
 	}

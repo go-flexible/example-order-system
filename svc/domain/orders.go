@@ -7,9 +7,12 @@ import (
 	"math/big"
 )
 
-type OrdersController struct{ Dependencies }
+type OrderController struct {
+	Dependencies
+	Nats NatsPublisher
+}
 
-func (o OrdersController) New(ctx context.Context, order Order) error {
+func (o OrderController) New(ctx context.Context, order Order) error {
 	order.OrderNumber = newOrderNumber(0)
 
 	var err error
@@ -18,7 +21,7 @@ func (o OrdersController) New(ctx context.Context, order Order) error {
 		return err
 	}
 
-	err = o.Nats().Publish("orders.new", order)
+	err = o.Nats.Publish("orders.new", order)
 	if err != nil {
 		return PublishingError{error: err}
 	}

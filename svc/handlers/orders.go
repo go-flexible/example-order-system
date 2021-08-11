@@ -16,7 +16,7 @@ func createOrder(deps Dependencies) http.HandlerFunc {
 			return
 		}
 
-		ctrl := domain.OrdersController{Dependencies: deps}
+		ctrl := domain.OrderController{Dependencies: deps}
 
 		if err := ctrl.New(r.Context(), order); err != nil {
 			log.Println(err)

@@ -20,7 +20,17 @@ services:
     ports:
       - "26257:26257"
       - "8888:8080"
-  
+
+  # Test suite database.
+  crdb-test:
+    container_name: crdb-test
+    image: cockroachdb/cockroach:v19.2.6
+    command: start --insecure --listen-addr 0.0.0.0:26258
+    volumes:
+      - crdb-test-vol:/cockroach/cockroach-data
+    ports:
+      - "26258:26257"
+
   # Monitoring stack.
   prometheus:
     container_name: prometheus
@@ -42,6 +52,7 @@ services:
     network_mode: host
 volumes:
   crdb-vol:
+  crdb-test-vol:
   prometheus-data:
   grafana-data:
 
