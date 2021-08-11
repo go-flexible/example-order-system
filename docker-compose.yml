@@ -1,0 +1,47 @@
+version: "3.9"
+services:
+  # Application dependencies.
+  redis:
+    container_name: redis
+    image: redis:alpine
+    ports: 
+      - "6379:6379"
+  nats:
+    container_name: nats
+    image: nats:alpine
+    ports:
+      - "4222:4222"
+  crdb:
+    container_name: crdb
+    image: cockroachdb/cockroach:v19.2.6
+    command: start --insecure --listen-addr 0.0.0.0:26257
+    volumes:
+      - crdb-vol:/cockroach/cockroach-data
+    ports:
+      - "26257:26257"
+      - "8888:8080"
+  
+  # Monitoring stack.
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    volumes: 
+      - ./infra/prometheus:/etc/prometheus
+      - prometheus-data:/prometheus 
+    command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
+    network_mode: host
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    volumes:
+      - grafana-data:/grafana
+      - ./infra/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./infra/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yaml
+      - ./infra/grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/datasource.yaml
+      - ./infra/grafana/dashboard.json:/etc/grafana/dashboards/go-process.json
+    network_mode: host
+volumes:
+  crdb-vol:
+  prometheus-data:
+  grafana-data:
+

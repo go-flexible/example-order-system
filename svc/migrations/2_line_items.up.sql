@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS line_items (
+	id UUID NOT NULL,
+	order_id UUID NOT NULL,
+	quantity INT8 NOT NULL,
+	tax_amount INT8 NOT NULL,
+	unit_price_amount INT8 NOT NULL,
+	total_line_amount INT8 NOT NULL,
+	tax_amount_before_discount INT8 NOT NULL,
+	unit_price_amount_before_discount INT8 NOT NULL,
+	total_line_amount_before_discount INT8 NOT NULL,
+	unit_price_currency STRING NOT NULL,
+	tax_amount_currency STRING NULL,
+	description STRING NULL,
+	created_at TIMESTAMPTZ NOT NULL,
+	updated_at TIMESTAMPTZ NULL,
+	CONSTRAINT line_items_pk PRIMARY KEY (id ASC),
+	CONSTRAINT line_items_orders_id_fk FOREIGN KEY (order_id) REFERENCES orders(id),
+	INDEX line_items_auto_index_line_items_orders_id_fk (order_id ASC),
+	FAMILY "primary" (id, order_id, quantity, tax_amount, unit_price_amount, total_line_amount, tax_amount_before_discount, unit_price_amount_before_discount, total_line_amount_before_discount, unit_price_currency, tax_amount_currency, description, created_at, updated_at)
+)
