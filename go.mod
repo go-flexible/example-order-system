@@ -4,7 +4,6 @@ go 1.16
 
 require (
 	github.com/Boostport/migration v0.21.2
-	github.com/blockloop/scan v1.3.0 // indirect
 	github.com/go-flexible/flex v0.0.0-20210801163701-7a71d6b8d0eb
 	github.com/go-flexible/flexhttp v0.0.0-20210613210218-6fdc3045265d
 	github.com/go-flexible/flexmetrics v0.0.0-20210808124749-347bc0dbeefe
