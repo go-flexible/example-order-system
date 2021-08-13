@@ -29,6 +29,10 @@ func (o OrderController) New(ctx context.Context, order Order) error {
 	return nil
 }
 
+func (o OrderController) GetOrderByID(ctx context.Context, id string) (Order, error) {
+	return getFullOrder(ctx, o.DB(), id)
+}
+
 const defaultOrderNumberLength = 12
 
 func newOrderNumber(length int) string {

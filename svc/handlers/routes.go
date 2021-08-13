@@ -17,4 +17,5 @@ type Dependencies interface {
 
 func RegisterRoutes(router *mux.Router, deps Dependencies) {
 	router.Handle("/order", createOrder(deps)).Methods(http.MethodPost)
+	router.Handle("/order/{id}", getOrderByID(deps)).Methods(http.MethodGet)
 }
