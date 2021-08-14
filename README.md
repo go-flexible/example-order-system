@@ -5,24 +5,23 @@ _class: invert
 title: go flexible
 ---
 
-# Flex
-
+![bg 50%](docs/iana-lettering.svg)
 A collection of packages for building Go services.
 
 ---
+<!-- paginate: true -->
+<!-- footer: ![height:50px](docs/iana.svg) ![height:50px](docs/flex-lettering.svg) -->
 # Goals
 
 - Provide `flex`ible primitives to build upon.
-- Solve common issues for 12 factor apps.
+- Simplify process lifecycle and graceful shutdown.
+- No third party dependencies allowed within `flex` itself.
+- All published packages must be tested.
+
+<!--
+- Anything relying on third-parties must be plugin, away from the core repository.
 - Be a good citizen in the Docker and Kubernetes ecosystem.
-
----
-
-# In Practice
-
-- The 12 factors help define some standard behaviours and expectations.
-- As the principles are broad, each language may implement differently.
-
+-->
 ---
 # Primitive: Runner
 
@@ -66,6 +65,10 @@ type Worker interface {
         Halter
 }
 ```
+---
+# In Practice
+
+![bg contain](diagram.svg)
 
 ---
 
@@ -81,6 +84,7 @@ The goal of `flex` is to provide a similar experience, for building `k8s` native
 opening yourself to an incredible variety of uses-cases, this in turn means
 having the flexibility you need to build complex applications. -->
 ---
+
 # The `flexhttp` plugin
 
 ```go
@@ -89,18 +93,17 @@ type Server struct{ *http.Server }
 func NewHTTPServer(s *http.Server) *Server {
         return &Server{Server: s}
 }
-
 func (s *Server) Run(_ context.Context) error {
         log.Printf("serving on: http://localhost%s\n", s.Addr)
         return s.ListenAndServe()
 }
-
 func (s *Server) Halt(ctx context.Context) error {
         return s.Shutdown(ctx)
 }
 ```
 
---- 
+---
+
 # The `flexmetrics` plugin
 
 `flexmetrics` exposes prometheus and pprof metrics on an http server.
@@ -138,11 +141,12 @@ func (s *Server) Run(_ context.Context) error {
 - Configurable port-bindings
 - Configurable http server
 - Sane defaults if you choose to use them
+
 ---
 
 # Live demo
 
-## Goals:
+## Goals
 
 - Build a non-trivial order system (think e-commerce).
 - Demonstrate how `flex` eliminates a lot of complicated setup.
