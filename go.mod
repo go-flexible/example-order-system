@@ -1,6 +1,6 @@
 module github.com/go-flexible/example-order-system
 
-go 1.16
+go 1.17
 
 require (
 	github.com/Boostport/migration v0.21.2
