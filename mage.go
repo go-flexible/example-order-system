@@ -3,7 +3,9 @@
 
 package main
 
-import "github.com/magefile/mage/sh"
+import (
+	"github.com/magefile/mage/sh"
+)
 
 func Run() error {
 	if err := sh.RunV("docker-compose", "up", "-d"); err != nil {

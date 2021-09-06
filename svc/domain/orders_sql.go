@@ -174,30 +174,30 @@ RETURNING id, created_at, updated_at`
 func getFullOrder(ctx context.Context, db *pgxpool.Pool, id string) (Order, error) {
 	order, err := getOrderByID(ctx, db, id)
 	if err != nil {
-		return Order{}, nil
+		return Order{}, err
 	}
 
 	payments, err := getPaymentsForOrder(ctx, db, id)
 	if err != nil {
-		return Order{}, nil
+		return Order{}, err
 	}
 	order.Payments = payments
 
 	lineItems, err := getLineItemsForOrder(ctx, db, id)
 	if err != nil {
-		return Order{}, nil
+		return Order{}, err
 	}
 	order.LineItems = lineItems
 
 	metadata, err := getMetadataForOrder(ctx, db, id)
 	if err != nil {
-		return Order{}, nil
+		return Order{}, err
 	}
 	order.Metadata = metadata
 
 	total, err := getTotalForOrder(ctx, db, id)
 	if err != nil {
-		return Order{}, nil
+		return Order{}, err
 	}
 	order.Total = total
 
