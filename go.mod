@@ -20,6 +20,8 @@ require (
 	github.com/onsi/gomega v1.13.0 // indirect
 )
 
+require github.com/brianvoe/gofakeit/v6 v6.9.0
+
 require (
 	4d63.com/gochecknoglobals v0.0.0-20201008074935-acfc0b28355a // indirect
 	github.com/BurntSushi/toml v0.3.1 // indirect

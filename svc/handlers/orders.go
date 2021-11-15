@@ -48,9 +48,14 @@ func getOrderByID(deps Dependencies) http.HandlerFunc {
 			return
 		}
 
-		if err := json.NewEncoder(w).Encode(order); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+		respondJSON(w, &order)
+	}
+}
+
+func respondJSON(w http.ResponseWriter, i interface{}) {
+	w.Header().Add("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(i); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 

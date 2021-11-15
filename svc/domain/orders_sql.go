@@ -16,7 +16,6 @@ func insertFullOrder(ctx context.Context, db *pgxpool.Pool, order Order) (Order,
 	for i, pymt := range order.Payments {
 		pymt.OrderID = order.ID
 
-		var err error
 		pymt, err = insertNewPayment(ctx, db, pymt)
 		if err != nil {
 			return order, err
@@ -27,7 +26,6 @@ func insertFullOrder(ctx context.Context, db *pgxpool.Pool, order Order) (Order,
 	for i, li := range order.LineItems {
 		li.OrderID = order.ID
 
-		var err error
 		li, err = insertNewLineItem(ctx, db, li)
 		if err != nil {
 			return order, err
@@ -46,13 +44,12 @@ func insertFullOrder(ctx context.Context, db *pgxpool.Pool, order Order) (Order,
 	for i, m := range order.Metadata {
 		m.OrderID = order.ID
 
-		var err error
-		m, err := insertOrderMetadata(ctx, db, m)
+		md, err := insertOrderMetadata(ctx, db, m)
 		if err != nil {
 			return order, err
 		}
 
-		order.Metadata[i] = m
+		order.Metadata[i] = md
 	}
 
 	return order, nil
